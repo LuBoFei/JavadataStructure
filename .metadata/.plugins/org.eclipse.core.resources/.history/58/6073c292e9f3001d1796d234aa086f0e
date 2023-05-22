@@ -1,0 +1,39 @@
+package tree;
+
+public class BinaryTreeDemo {
+	public static void main(String[] args) {
+		
+	}
+}
+
+class Node{
+	int value;
+	Node left;
+	Node right;
+	public Node(int value) {
+		this.value = value;
+	}
+	
+	public void add(Node node) {
+		//µÝ¹éÌí¼Ó
+		if(node == null) {
+			return ;
+		}
+		
+		if ( node.value < this.value) {
+			if(this.left == null) {
+				this.left = node;
+			}else {
+				//µÝ¹éÌí¼Ó
+				this.left.add(node);
+			}
+		}else {
+			if(this.right == null) {
+				this.right = node;
+			}else {
+				this.right.add(node);
+			}
+		}
+	}
+	
+}

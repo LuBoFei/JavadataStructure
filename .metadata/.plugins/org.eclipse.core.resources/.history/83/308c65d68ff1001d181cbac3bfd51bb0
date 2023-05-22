@@ -1,0 +1,246 @@
+package Huffmantreecode;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+public class Huffmancode {
+
+	public static void main(String[] args) {
+
+		String content = "i like like like java do you like a java";
+		
+		byte[] contentBytes = content.getBytes();
+		
+		byte[] bcb = huffmanZip(contentBytes);
+//		System.out.println(Arrays.toString(bcb));
+
+		/*分步
+		 * byte[] contentBytes = content.getBytes();
+		 * System.out.println(contentBytes.length);
+		 * 
+		 * List<Node1> nodes = getNodes(contentBytes); System.out.println(nodes);
+		 * 
+		 * System.out.println("---------------------"); Node1 huffmanTree =
+		 * createHuffmanTree(nodes); huffmanTree.preOrder();
+		 * 
+		 * System.out.println("---------------------"); // getCodes(huffmanTree, "",
+		 * stringBuilder); Map<Byte, String> codes = getCodes(huffmanTree);
+		 * System.out.println(codes);
+		 * 
+		 * //zip(contentBytes, codes); byte[] huffermanBytes = zip(contentBytes, codes);
+		 * System.out.println(Arrays.toString(huffermanBytes));
+		 */
+		
+		
+
+	}
+	
+	//解码
+	//1.将一个byte 转成 一个二进制的字符串
+	private static String buteToBitString(boolean flag, byte b){
+		
+		int temp = b;
+		
+		//如果为整数补高位
+		if(flag) { //如果为8位
+			temp |= 256;
+		}
+		
+		String str = Integer.toBinaryString(temp);// 返回是补码
+		
+		if(flag) {
+			return str.substring(str.length() - 8);
+		}else {
+			return str;
+		}
+	}
+	
+	//2.对压缩数据解码
+	private static byte[] decode(Map<Byte,String> hurrmanCode
+	
+	//使用一个方法封装前面的方法
+	private static byte[] huffmanZip(byte [] bytes ) {
+		
+		List<Node1> nodes = getNodes(bytes);
+		//创建赫夫曼殊
+		//根据赫夫曼殊生成 树
+		Node1 huffermanRoot = createHuffmanTree(nodes);
+		
+		Map<Byte, String> codes = getCodes(huffermanRoot);
+		
+		//压缩成字节数组
+		byte[] huffermanBytes = zip(bytes, codes);
+		
+		return huffermanBytes;
+	}
+	
+	//将字符数组，生成的赫夫曼编码表，返回一个赫夫曼编码压缩后的bute
+	private static byte[] zip(byte[] bytes, Map<Byte,String> huffmantree) {
+		
+		StringBuilder stringBuilder = new StringBuilder();
+		for(byte b : bytes) {
+			stringBuilder.append(huffmantree.get(b));
+		}
+		
+		//System.out.println(stringBuilder);
+		int len;
+		if(stringBuilder.length() % 8 == 0) {
+			len = stringBuilder.length() / 8;
+		}else {
+			len = stringBuilder.length() / 8 + 1;
+		}
+		
+		byte[] huffermanBytes = new byte[len];
+		int index= 0;
+		
+		for(int i = 0; i < stringBuilder.length(); i += 8) {//每八位对应一个byte
+			String strByte;
+			
+			if(i+8 > stringBuilder.length()) {
+				strByte = stringBuilder.substring(i);
+			}
+			else {
+				strByte = stringBuilder.substring(i,i+8);
+			}
+					
+			huffermanBytes[index] = (byte)Integer.parseInt(strByte,2);
+			
+			index++;
+			
+		}
+		
+		return huffermanBytes;
+		
+	}
+
+	private static List<Node1> getNodes(byte[] bytes) {
+
+		ArrayList<Node1> nodes = new ArrayList<Node1>();
+
+		Map<Byte, Integer> counts = new HashMap();
+
+		for (byte b : bytes) {
+			Integer count = counts.get(b);
+			if (count == null) {
+				// 第一次
+				counts.put(b, 1);
+			} else {
+				counts.put(b, count + 1);
+			}
+		}
+
+		for (Map.Entry<Byte, Integer> entry : counts.entrySet()) {
+
+			nodes.add(new Node1(entry.getKey(), entry.getValue()));
+
+		}
+
+		return nodes;
+
+	}
+
+	private static Node1 createHuffmanTree(List<Node1> nodes) {
+
+		while (nodes.size() > 1) {
+			Collections.sort(nodes);
+
+			// 取出一颗最小的节点（二叉树）
+			Node1 leftNode = nodes.get(0);
+			// 取出一颗第二课最小的节点（二叉树）
+			Node1 rightNode = nodes.get(1);
+			// 创建一颗新的二叉树，没date。只有权值
+			Node1 parent = new Node1(null, leftNode.weight + rightNode.weight);
+
+			parent.left = leftNode;
+			parent.right = rightNode;
+
+			// 删除处理过的二叉树
+			nodes.remove(leftNode);
+			nodes.remove(rightNode);
+
+			nodes.add(parent);
+
+		}
+		return nodes.get(0);
+
+	}
+
+	public static void preOrder(Node1 node) {
+		if(node != null) {
+			node.preOrder();
+		}else {
+			System.out.println("是空术");
+		}
+	}
+	
+	static Map<Byte,String> huffmanCodes = new HashMap<Byte, String>();
+	static StringBuilder stringBuilder = new StringBuilder();
+	
+	private static Map<Byte,String> getCodes(Node1 root){
+		if(root== null) {
+			return null;
+		}
+		getCodes(root.left,"0",stringBuilder);
+		getCodes(root.right,"1",stringBuilder);
+		return huffmanCodes;
+	}
+	
+	//赫夫曼编码表
+	private static void getCodes(Node1 node, String code,StringBuilder stringBuilder) {
+		StringBuilder stringBuilder2 = new StringBuilder(stringBuilder);
+		
+		stringBuilder2.append(code);
+		
+		if(node != null) {
+			
+			if(node.date == null) {
+				//非叶子节点
+				getCodes(node.left, "0", stringBuilder2);
+				getCodes(node.right, "1", stringBuilder2);
+			}else {
+				huffmanCodes.put(node.date, stringBuilder2.toString());
+			}
+			
+		}
+	}
+}
+
+class Node1 implements Comparable<Node1> {
+	Byte date;// 存放数据
+	int weight;// 权值
+	Node1 left;// 左子节点
+	Node1 right;
+
+	public Node1(Byte date, int weight) {
+		super();
+		this.date = date;
+		this.weight = weight;
+	}
+
+	@Override
+	public String toString() {
+		return "Node1 [date=" + date + ", weight=" + weight + "]";
+	}
+
+	@Override
+	public int compareTo(Node1 o) {
+		// TODO Auto-generated method stub
+		// 从小到大排
+		return this.weight - o.weight;
+	}
+
+	// 前序遍历
+	public void preOrder() {
+		System.out.println(this);
+		if (this.left != null) {
+			this.left.preOrder();
+		}
+		if (this.right != null) {
+			this.right.preOrder();
+		}
+	}
+}

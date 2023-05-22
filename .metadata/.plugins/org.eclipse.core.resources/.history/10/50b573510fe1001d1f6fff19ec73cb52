@@ -1,0 +1,76 @@
+package tree;
+
+import java.util.Arrays;
+
+//堆排序
+public class HeapSort {
+
+	public static void main(String[] args) {
+		
+		//升序排列， 大顶堆
+		int arr[] = {4,6,8,5,9};
+		
+		//分布完成
+		
+		
+		
+	};
+	
+	
+	//编写一个堆排序的方法
+	public static void heapSirt(int arr[]) {
+		int temp  = 0;
+		System.out.println("堆排序");
+		
+		for(int i = arr.length / 2-1; i >=0; i--) {
+			
+			adjustHeap(arr, i, arr.length);
+			
+		}
+		
+		for(int j = arr.length; j > 0 ; k--) {
+			
+			temp = arr[j];
+			arr[j] = arr[0];
+			arr[o] = temp;
+			
+			adjustHeap(arr, 0, arr.length);
+			
+		}
+		
+		System.out.println("第一次:"+Arrays.toString(arr));
+		
+	}
+	
+	//将一个数组"(二叉树)，调整成一个大顶堆
+	/**
+	 *  将以 i对应非叶子节点的树调整成一个大顶堆
+	 *  {4,6,8,5,9}； i= 1 =》 adjustheap =》{4，9，8，5，6}
+	 *  再次调用adjustHeap i = 0 => {4，9，8，5，6} => {9，6，8，5，4}
+	 * @param arr 待调整的数组
+	 * @param i 标识非叶子节点在数组中的索引
+	 * @param length 标识对多小个元素进行调整，逐渐减少
+	 */
+	public static void adjustHeap(int arr[],int i,int length) {
+		
+		int temp = arr[i];//取出当前元素
+		
+		// k = i * 2 + 1 i 节点的左子节点
+		for(int k = i * 2 + 1; k < length; k = k * 2 + 1) {
+			if(k+1 < length && arr[k] < arr[k+1]){ //左子节点小于右子节点
+				k++;//k指向右子节点
+			}
+			if(arr[k] > temp) {//子节点大于父节点
+				arr[i] = arr[k];
+				i = k;//继续循环比较
+			}else {
+				break;
+			}
+		}
+		
+		//循环结束，i为父节点的树的最大值放在了最顶（局部）
+		arr[i] = temp;//将temp值放到调整后的位置
+		
+	}
+	
+}
